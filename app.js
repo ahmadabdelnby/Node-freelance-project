@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
-const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerJsDoc = require('swagger-jsdoc'); 
+
 const userRoute = require('./Routes/userRout');
 const authRoute = require('./Routes/authRoute');
 const specialtyRoute = require('./Routes/specialtyRoute');
