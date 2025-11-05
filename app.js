@@ -11,6 +11,7 @@ const authRoute = require('./Routes/authRoute');
 const specialtyRoute = require('./Routes/specialtyRoute');
 const jobRoute = require('./Routes/jobRoute');
 const skillRoute = require('./Routes/skillRoute');
+const notificationRoutes = require('./Routes/notificationRoute');
 
 //middleware /must be added at the top
 app.use(express.json());
@@ -117,6 +118,7 @@ app.use('/Freelancing/api/v1/users', userRoute);
 app.use('/Freelancing/api/v1/specialties', specialtyRoute);
 app.use('/Freelancing/api/v1/jobs', jobRoute);
 app.use('/Freelancing/api/v1/skills', skillRoute);
+app.use('/Freelancing/api/v1/notifications', notificationRoutes);
 
 //mongoose connection
 mongoose.connect(process.env.MONGODB_URI)
