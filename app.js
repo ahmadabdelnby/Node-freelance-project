@@ -14,6 +14,8 @@ const jobRoute = require('./Routes/jobRoute');
 const skillRoute = require('./Routes/skillRoute');
 const proposalRoute = require('./Routes/proposalRoute');
 const reviewRoute = require("./Routes/ReviewRoute");
+const contractRoute = require("./Routes/contractRoute");
+
 
 //middleware /must be added at the top
 app.use(express.json());
@@ -121,6 +123,7 @@ app.use('/Freelancing/api/v1/jobs', jobRoute);
 app.use('/Freelancing/api/v1/skills', skillRoute);
 app.use('/Freelancing/api/v1/proposals', proposalRoute);
 app.use("/Freelancing/api/v1/reviews", reviewRoute);
+app.use("/Freelancing/api/v1/contracts", contractRoute);
 
 //mongoose connection
 mongoose
