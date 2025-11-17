@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
         lowercase: true,
-        maxlength: 255,
+        maxLength: 255,
         validate: {
             validator: function (email) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
@@ -21,8 +21,8 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
-        minlength: 3,
-        maxlength: 50,
+        minLength: 3,
+        maxLength: 50,
         validate: {
             validator: function (username) {
                 return /^[a-zA-Z0-9_]+$/.test(username);
@@ -33,36 +33,103 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        maxlength: 15
+        maxLength: 15
+    },
+    confirmPassword: {
+        type: String,
+        required: true,
+        maxLength: 15,
+        validate: {
+            validator: function (confirmPassword) {
+                return confirmPassword === this.password;
+            },
+            message: 'Passwords do not match'
+        }
     },
     first_name: {
         type: String,
         required: true,
         trim: true,
-        maxlength: 100
+        maxLength: 100
     },
     last_name: {
         type: String,
         required: true,
         trim: true,
-        maxlength: 100
+        maxLength: 100
     },
     profile_picture_url: {
         type: String,
         default: null,
-        maxlength: 255
-        // Removed URL validation to allow any string for testing
+        maxLength: 255
+    },
+    phone_number: {
+        type: String,
+        default: null,
+        required: true,
+        trim: true,
+        maxLength: 20
+    },
+    gender: {
+        type: String,
+        enum: ['male', 'female'],
+        required: true,
+        default: null
+    },
+    birthdate: {
+        type: Date,
+        default: null
     },
     country: {
         type: String,
+        required: true,
         default: null,
         trim: true,
-        maxlength: 100
+        maxLength: 100
     },
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
+    } , 
+    aboutMe: {
+        type: String,
+        default: null,
+        required: true,
+        minLength: 500,
+        trim: true,
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
+    },
+    specialty: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Specialty',
+        required: true
+    },
+    skills: [
+        {
+            skillId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Skill'
+            }
+        }
+    ],
+    contracts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Contract'
+        }
+    ],
+    rehireRate: {
+        type: Number,
+        default: 0
+    },
+    completedJobs: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true });
 

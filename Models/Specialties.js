@@ -10,6 +10,11 @@ const specialtySchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
+    },
+    Category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
     }
 }, { timestamps: true });
 
