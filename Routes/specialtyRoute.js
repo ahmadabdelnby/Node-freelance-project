@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { createSpecialty, getAllSpecialties, getSpecialtyById, updateSpecialtyById, deleteSpecialtyById } = require('../Controllers/specialtyController');
+const authentic = require('../middleware/authenticationMiddle');
+const authorize = require('../middleware/authorizationMiddle');
 
 /**
  * @swagger
@@ -23,7 +25,7 @@ const { createSpecialty, getAllSpecialties, getSpecialtyById, updateSpecialtyByI
  *       201:
  *         description: Specialty created successfully
  */
-router.post('/', createSpecialty);
+router.post('/', authentic, authorize('admin'), createSpecialty);
 
 /**
  * @swagger
@@ -82,7 +84,7 @@ router.get('/:id', getSpecialtyById);
  *       200:
  *         description: Specialty updated successfully
  */
-router.put('/:id', updateSpecialtyById);
+router.put('/:id', authentic, authorize('admin'), updateSpecialtyById);
 
 /**
  * @swagger
@@ -100,6 +102,6 @@ router.put('/:id', updateSpecialtyById);
  *       200:
  *         description: Specialty deleted successfully
  */
-router.delete('/:id', deleteSpecialtyById);
+router.delete('/:id', authentic, authorize('admin'), deleteSpecialtyById);
 
 module.exports = router;

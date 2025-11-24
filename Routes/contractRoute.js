@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const { createContract, getAllContracts, getContractById, updateContractById, deleteContractById } = require('../Controllers/contractController');
+const authentic = require('../middleware/authenticationMiddle');
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ const { createContract, getAllContracts, getContractById, updateContractById, de
  *       500:
  *         description: Internal server error
  */
-router.post('/Freelancing/api/v1/contracts', createContract);
+router.post('/', authentic, createContract);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.post('/Freelancing/api/v1/contracts', createContract);
  *       500:
  *         description: Internal server error
  */
-router.get('/Freelancing/api/v1/contracts', getAllContracts);
+router.get('/', authentic, getAllContracts);
 
 /**
  * @swagger
@@ -73,7 +74,7 @@ router.get('/Freelancing/api/v1/contracts', getAllContracts);
  *       500:
  *         description: Internal server error
  */
-router.get('/Freelancing/api/v1/contracts/:id', getContractById);
+router.get('/:id', authentic, getContractById);
 
 /**
  * @swagger
@@ -116,7 +117,7 @@ router.get('/Freelancing/api/v1/contracts/:id', getContractById);
  *       500:
  *         description: Internal server error
  */
-router.put('/Freelancing/api/v1/contracts/:id', updateContractById);
+router.put('/:id', authentic, updateContractById);
 
 /**
  * @swagger
@@ -139,6 +140,6 @@ router.put('/Freelancing/api/v1/contracts/:id', updateContractById);
  *       500:
  *         description: Internal server error
  */
-router.delete('/Freelancing/api/v1/contracts/:id', deleteContractById);
+router.delete('/:id', authentic, deleteContractById);
 
 module.exports = router;

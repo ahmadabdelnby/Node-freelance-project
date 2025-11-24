@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { createSkill, getAllSkills, getSkillById, updateSkillById, deleteSkillById } = require('../Controllers/skillsController');
+const authentic = require('../middleware/authenticationMiddle');
+const authorize = require('../middleware/authorizationMiddle');
 
 /**
  * @swagger
@@ -23,7 +25,7 @@ const { createSkill, getAllSkills, getSkillById, updateSkillById, deleteSkillByI
  *       201:
  *         description: Skill created successfully
  */
-router.post('/', createSkill);
+router.post('/', authentic, authorize('admin'), createSkill);
 
 /**
  * @swagger
@@ -82,7 +84,7 @@ router.get('/:id', getSkillById);
  *       200:
  *         description: Skill updated successfully
  */
-router.put('/:id', updateSkillById);
+router.put('/:id', authentic, authorize('admin'), updateSkillById);
 
 /**
  * @swagger
@@ -100,6 +102,6 @@ router.put('/:id', updateSkillById);
  *       200:
  *         description: Skill deleted successfully
  */
-router.delete('/:id', deleteSkillById);
+router.delete('/:id', authentic, authorize('admin'), deleteSkillById);
 
 module.exports = router;

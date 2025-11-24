@@ -16,6 +16,7 @@ const notificationRoutes = require('./Routes/notificationRoute');
 const proposalRoute = require('./Routes/proposalRoute');
 const reviewRoute = require("./Routes/ReviewRoute");
 const contractRoute = require("./Routes/contractRoute");
+const categoryRoute = require("./Routes/categoryRoute");
 
 
 //middleware /must be added at the top
@@ -126,6 +127,7 @@ app.use('/Freelancing/api/v1/notifications', notificationRoutes);
 app.use('/Freelancing/api/v1/proposals', proposalRoute);
 app.use("/Freelancing/api/v1/reviews", reviewRoute);
 app.use("/Freelancing/api/v1/contracts", contractRoute);
+app.use("/Freelancing/api/v1/categories", categoryRoute);
 
 //mongoose connection
 mongoose

@@ -10,6 +10,7 @@ const {
   updateReviewById,
   deleteReviewById,
 } = require("../Controllers/ReviewController");
+const authentic = require('../middleware/authenticationMiddle');
 
 /**
  * @swagger
@@ -57,7 +58,7 @@ const {
  *       500:
  *         description: Server error
  */
-router.post("/", createReview);
+router.post("/", authentic, createReview);
 
 /**
  * @swagger
@@ -197,7 +198,7 @@ router.get("/contract/:contractId", getReviewsByContract);
  *       500:
  *         description: Server error
  */
-router.put("/:id", updateReviewById);
+router.put("/:id", authentic, updateReviewById);
 
 /**
  * @swagger
@@ -220,6 +221,6 @@ router.put("/:id", updateReviewById);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", deleteReviewById);
+router.delete("/:id", authentic, deleteReviewById);
 
 module.exports = router;

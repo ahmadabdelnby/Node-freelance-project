@@ -16,7 +16,24 @@ function generateToken(user) {
 // Register a new user
 const register = async (req, res) => {
     try {
-        const { email, username, password, first_name, last_name, profile_picture_url, country, role } = req.body;
+        const { 
+            email, 
+            username, 
+            password, 
+            confirmPassword,
+            first_name, 
+            last_name, 
+            profile_picture_url, 
+            phone_number,
+            gender,
+            birthdate,
+            country, 
+            role,
+            aboutMe,
+            category,
+            specialty,
+            skills
+        } = req.body;
         
         // Check if user already exists
         const existingUser = await user.findOne({ email });
@@ -34,11 +51,19 @@ const register = async (req, res) => {
             email,
             username,
             password,
+            confirmPassword,
             first_name,
             last_name,
             profile_picture_url,
+            phone_number,
+            gender,
+            birthdate,
             country,
-            role
+            role,
+            aboutMe,
+            category,
+            specialty,
+            skills: skills ? skills.map(skillId => ({ skillId })) : []
         });
         
         await newUser.save();
@@ -52,7 +77,12 @@ const register = async (req, res) => {
                 username: newUser.username,
                 first_name: newUser.first_name,
                 last_name: newUser.last_name,
-                role: newUser.role
+                phone_number: newUser.phone_number,
+                gender: newUser.gender,
+                country: newUser.country,
+                role: newUser.role,
+                category: newUser.category,
+                specialty: newUser.specialty
             }
         });
     } catch (error) {
@@ -103,17 +133,27 @@ const login = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const Users = await user.find();
+        const Users = await user.find()
+            .select('-password -confirmPassword')
+            .populate('category', 'name')
+            .populate('specialty', 'name')
+            .populate('skills.skillId', 'name')
+            .populate('contracts');
         res.json(Users);
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
 const getUserById = async (req, res) => {
     try {
         const userId = req.params.id;
-        const User = await user.findById(userId);
+        const User = await user.findById(userId)
+            .select('-password -confirmPassword')
+            .populate('category', 'name description')
+            .populate('specialty', 'name description')
+            .populate('skills.skillId', 'name category')
+            .populate('contracts');
         if (!User) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -140,13 +180,39 @@ const deleteUserById = async (req, res) => {
 const updateUserById = async (req, res) => {
     try {
         const userId = req.params.id;
-        const updatedData = req.body;
-        const User = await user.findByIdAndUpdate(userId, updatedData, { new: true });
+        const updatedData = { ...req.body };
+        
+        // Prevent direct password updates (should use separate change password endpoint)
+        delete updatedData.password;
+        delete updatedData.confirmPassword;
+        
+        // Handle skills array format
+        if (updatedData.skills && Array.isArray(updatedData.skills)) {
+            updatedData.skills = updatedData.skills.map(skillId => 
+                typeof skillId === 'object' ? skillId : { skillId }
+            );
+        }
+        
+        const User = await user.findByIdAndUpdate(userId, updatedData, { 
+            new: true,
+            runValidators: true 
+        })
+        .select('-password -confirmPassword')
+        .populate('category', 'name description')
+        .populate('specialty', 'name description')
+        .populate('skills.skillId', 'name category');
+        
         if (!User) {
             return res.status(404).json({ message: "User not found" });
         }
         res.json(User);
     } catch (error) {
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ 
+                message: 'Validation error', 
+                errors: Object.values(error.errors).map(err => err.message)
+            });
+        }
         res.status(400).json({ message: error.message });
     }
 }
@@ -200,7 +266,13 @@ const profile = async (req, res) => {
         }
         
         // Get full user details from database
-        const userDetails = await user.findById(req.user.id).select('-password');
+        const userDetails = await user.findById(req.user.id)
+            .select('-password -confirmPassword')
+            .populate('category', 'name description')
+            .populate('specialty', 'name description')
+            .populate('skills.skillId', 'name category')
+            .populate('contracts');
+            
         if (!userDetails) {
             return res.status(404).json({ message: 'User not found' });
         }

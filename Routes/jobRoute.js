@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { createJob, getAllJobs, getJobById, updateJobById, deleteJobById } = require('../Controllers/jobsController');
+const authentic = require('../middleware/authenticationMiddle');
 
 /**
  * @swagger
@@ -39,7 +40,7 @@ const { createJob, getAllJobs, getJobById, updateJobById, deleteJobById } = requ
  *       201:
  *         description: Job created successfully
  */
-router.post('/', createJob);
+router.post('/', authentic, createJob);
 
 /**
  * @swagger
@@ -117,7 +118,7 @@ router.get('/:id', getJobById);
  *       200:
  *         description: Job updated successfully
  */
-router.put('/:id', updateJobById);
+router.put('/:id', authentic, updateJobById);
 
 /**
  * @swagger
@@ -135,6 +136,6 @@ router.put('/:id', updateJobById);
  *       200:
  *         description: Job deleted successfully
  */
-router.delete('/:id', deleteJobById);
+router.delete('/:id', authentic, deleteJobById);
 
 module.exports = router;

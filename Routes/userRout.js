@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { deleteUserById, getAllUsers,getUserById,updateUserById } = require('../Controllers/userController');
+const authentic = require('../middleware/authenticationMiddle');
+const authorize = require('../middleware/authorizationMiddle');
 
 /**
  * @swagger
@@ -71,7 +73,7 @@ router.get('/:id', getUserById);
  *       200:
  *         description: User updated successfully
  */
-router.put('/:id', updateUserById);
+router.put('/:id', authentic, updateUserById);
 
 /**
  * @swagger
@@ -89,6 +91,6 @@ router.put('/:id', updateUserById);
  *       200:
  *         description: User deleted successfully
  */
-router.delete('/:id', deleteUserById);
+router.delete('/:id', authentic, authorize('admin'), deleteUserById);
 
 module.exports = router;

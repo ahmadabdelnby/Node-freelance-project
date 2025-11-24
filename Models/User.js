@@ -95,19 +95,16 @@ const userSchema = new mongoose.Schema({
     aboutMe: {
         type: String,
         default: null,
-        required: true,
         minLength: 500,
         trim: true,
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true
+        ref: 'Category'
     },
     specialty: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Specialty',
-        required: true
+        ref: 'Specialty'
     },
     skills: [
         {
