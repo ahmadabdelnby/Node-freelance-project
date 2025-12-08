@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createSpecialty, getAllSpecialties, getSpecialtyById, updateSpecialtyById, deleteSpecialtyById } = require('../Controllers/specialtyController');
+const { createSpecialty, getAllSpecialties, getSpecialtyById, updateSpecialtyById, deleteSpecialtyById,getSpecialtiesByCategory } = require('../Controllers/specialtyController');
 const authentic = require('../middleware/authenticationMiddle');
 const authorize = require('../middleware/authorizationMiddle');
 
@@ -103,5 +103,30 @@ router.put('/:id', authentic, authorize('admin'), updateSpecialtyById);
  *         description: Specialty deleted successfully
  */
 router.delete('/:id', authentic, authorize('admin'), deleteSpecialtyById);
+
+/**
+ * @swagger
+ * /Freelancing/api/v1/specialties/category/{categoryId}:
+ *   get:
+ *     summary: Get specialties by category ID
+ *     tags: [Specialties]
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the category
+ *     responses:
+ *       200:
+ *         description: List of specialties for the given category
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Specialty'
+ */
+router.get('/category/:categoryId',getSpecialtiesByCategory);
 
 module.exports = router;

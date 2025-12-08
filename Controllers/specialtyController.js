@@ -85,10 +85,24 @@ const deleteSpecialtyById = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+// Get specialties by category
+const getSpecialtiesByCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId; 
+        const specialties = await specialty
+            .find({ Category: categoryId }) 
+        res.json(specialties);
+    } catch (error) {
+        console.error('Error getting specialties by category:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 module.exports = {
     createSpecialty,
     getAllSpecialties,
     getSpecialtyById,
     updateSpecialtyById,
-    deleteSpecialtyById
+    deleteSpecialtyById,
+    getSpecialtiesByCategory
 };
