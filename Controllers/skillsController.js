@@ -22,15 +22,6 @@ const createSkill = async (req, res) => {
     }
 };
 
-//get all skills
-const getAllSkills = async (req, res) => {
-    try {
-        const skills = await skill.find().populate('specialty', 'name description');
-        res.json(skills);
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
-};
 
 //get skill by id
 const getSkillById = async (req, res) => {
@@ -75,10 +66,20 @@ const deleteSkillById = async (req, res) => {
     }
 };
 
+//get all skills for admin dashboard
+const getAllSkills = async (req, res) => {
+    try {
+        const skills = await skill.find().populate('specialty', 'name description');
+        res.json(skills);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
     createSkill,
-    getAllSkills,
     getSkillById,
     updateSkillById,
-    deleteSkillById
+    deleteSkillById,
+    getAllSkills
 };

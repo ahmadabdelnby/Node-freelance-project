@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { createContract, getAllContracts, getContractById, updateContractById, deleteContractById } = require('../Controllers/contractController');
+const { createContract,getMyContracts, getContractById, updateContractById, deleteContractById, getAllContracts } = require('../Controllers/contractController');
 const authentic = require('../middleware/authenticationMiddle');
 
 /**
@@ -52,6 +52,10 @@ router.post('/', authentic, createContract);
  *         description: Internal server error
  */
 router.get('/', authentic, getAllContracts);
+
+
+router.get('/mycontracts', authentic, getMyContracts);
+
 
 /**
  * @swagger
