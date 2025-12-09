@@ -91,52 +91,45 @@ const editProposal = async (req, res) => {
   }
 };
 /**********************************************************Delete********************************************************/
-//make sure the user is logged by checking if there is token
-//if there is no token then "please login" message, if there is token proceed to next step
-//make sure the user-id in the payload is the same freelancer-id in proposal collection
-//if it does not exist "not found user-id" message, if it exists check if the ids matches
-//if it matches delete
-//if no match "whatever" message
+// const deleteProposal = async (req, res) => {
+//   try {
+//     // make sure the user is logged by checking if there is token
+//     const freelancerId = req.user?.id;
+//     if (!freelancerId) {
+//       return res.status(401).json({ message: 'Please login first.' });
+//     }
 
-const deleteProposal = async (req, res) => {
-  try {
-    // make sure the user is logged by checking if there is token
-    const freelancerId = req.user?.id;
-    if (!freelancerId) {
-      return res.status(401).json({ message: 'Please login first.' });
-    }
+//     const proposalId = req.params.id;
 
-    const proposalId = req.params.id;
+//     // find the proposal in DB
+//     const proposal = await Proposal.findById(proposalId);
 
-    // find the proposal in DB
-    const proposal = await Proposal.findById(proposalId);
+//     // if it does not exist -> "not found user-id" message
+//     if (!proposal) {
+//       return res.status(404).json({ message: 'Proposal not found.' });
+//     }
 
-    // if it does not exist -> "not found user-id" message
-    if (!proposal) {
-      return res.status(404).json({ message: 'Proposal not found.' });
-    }
+//     // make sure the user-id in the payload is the same freelancer-id in proposal collection
+//     if (!proposal.freelancer_id.equals(freelancerId)) {
+//       // if no match -> "whatever" message
+//       return res.status(403).json({ message: 'You can only delete your own proposals.' });
+//     }
 
-    // make sure the user-id in the payload is the same freelancer-id in proposal collection
-    if (!proposal.freelancer_id.equals(freelancerId)) {
-      // if no match -> "whatever" message
-      return res.status(403).json({ message: 'You can only delete your own proposals.' });
-    }
+//     // check proposal status before deletion
+//     if (proposal.status !== 'submitted') {
+//       return res.status(400).json({ message: 'You can only delete proposals that are still submitted.' });
+//     }
 
-    // check proposal status before deletion
-    if (proposal.status !== 'submitted') {
-      return res.status(400).json({ message: 'You can only delete proposals that are still submitted.' });
-    }
+//     // if it matches delete
+//     await Proposal.findByIdAndDelete(proposalId);
 
-    // if it matches delete
-    await Proposal.findByIdAndDelete(proposalId);
+//     res.status(200).json({ message: 'Proposal deleted successfully.' });
 
-    res.status(200).json({ message: 'Proposal deleted successfully.' });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error. Could not delete proposal.' });
-  }
-};
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error. Could not delete proposal.' });
+//   }
+// };
 
 /**********************************************************SHOW ALL PROPOSALS********************************************************/
 const getMyProposals = async (req, res) => {
@@ -204,5 +197,59 @@ const hireProposal = async (req, res) => {
   }
 };
 
+//get all proposals for admin dashboard
+const getAllProposals = async (req, res) => {
+    try {
+        const proposals = await Proposal.find()
+        .populate('freelancer_id','email');
+        res.status(200).json(proposals);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+/**********************************************************Delete a Proposal********************************************************/
+//delete a proposal by admin and user (this needs authorizaion for role user too)
+const deleteProposal = async (req, res) => {
+  try {
+    // Ensure the user is logged in
+    const userId = req.user?.id;
+    const userRole = req.user?.role;
 
-module.exports = { createProposal, editProposal,getMyProposals, hireProposal, deleteProposal };
+    if (!userId) {
+      return res.status(401).json({ message: 'Please login first.' });
+    }
+
+    const proposalId = req.params.id;
+
+    // Find the proposal
+    const proposal = await Proposal.findById(proposalId);
+
+    if (!proposal) {
+      return res.status(404).json({ message: 'Proposal not found.' });
+    }
+
+    // Admin can delete any proposal
+    const isAdmin = userRole === 'admin';
+    const isOwner = proposal.freelancer_id.equals(userId);
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: 'You can only delete your own proposals.' });
+    }
+
+    // Optional: check status only for non-admins
+    if (!isAdmin && proposal.status !== 'submitted') {
+      return res.status(400).json({ message: 'You can only delete proposals that are still submitted.' });
+    }
+
+    // Delete proposal
+    await Proposal.findByIdAndDelete(proposalId);
+
+    res.status(200).json({ message: 'Proposal deleted successfully.' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error. Could not delete proposal.' });
+  }
+};
+
+module.exports = { createProposal, editProposal,getMyProposals, hireProposal, deleteProposal,getAllProposals };

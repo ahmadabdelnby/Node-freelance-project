@@ -93,4 +93,7 @@ router.put('/:id', authentic, updateUserById);
  */
 router.delete('/:id', authentic, authorize('admin'), deleteUserById);
 
+
+
+
 module.exports = router;

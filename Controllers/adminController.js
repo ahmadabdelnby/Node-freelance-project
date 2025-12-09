@@ -1,18 +1,16 @@
 const { MongoClient } = require('mongodb');
-const mongoose = require('mongoose');
-const { applyTimestamps } = require('../models/User');
-// replace with your connection URI
-const Proposal = require("../controllers/proposalController");
-const Category = require("../controllers/categoriesController");
-const Job = require("../controllers/jobsController");
-const Skill = require("../controllers/skillsController");
-const Speciality = require("../controllers/specialtyController");
-const User = require("../controllers/userController");
+
+const Proposal = require("../Controllers/proposalController");
+const Category = require("../Controllers/categoriesController");
+const Job = require("../Controllers/jobsController");
+const Skill = require("../Controllers/skillsController");
+const Speciality = require("../Controllers/specialtyController");
+const User = require("../Controllers/userController");
 const Contract = require('../Controllers/contractController')
 //const Portfolio = require("../controllers/portfolioitemController");
 
 const collectionControllers = {
-  proposals: Proposal.getMyProposals,
+  proposals: Proposal.getAllProposals,
   categories: Category.getAllCategories,
   jobs: Job.getAllJobs,
   skills: Skill.getAllSkills,
@@ -51,7 +49,7 @@ async function getCollections(req, res) {
   }
 }
 
-
+//get all Docs in a specific collection
 async function getCollectionDocs(req, res) {
   const { collectionName } = req.params;
 
