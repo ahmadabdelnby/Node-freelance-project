@@ -14,7 +14,7 @@ const collectionControllers = {
   categories: Category.getAllCategories,
   jobs: Job.getAllJobs,
   skills: Skill.getAllSkills,
-  specialities: Speciality.getAllSpecialties,
+  specialties: Speciality.getAllSpecialties,
   users: User.getAllUsers,
   contracts: Contract.getAllContracts
   //portfolioitems: Portfolio.getAllPortfolioItems

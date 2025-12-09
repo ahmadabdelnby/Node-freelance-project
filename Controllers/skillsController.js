@@ -1,27 +1,76 @@
-const skill = require('../Models/Skills');
+const Skill = require('../Models/Skills');
+const Specialty = require('../Models/Specialties');
 
 // Create a new skill
+// const createSkill = async (req, res) => {
+//     try {
+//         const { name, specialty } = req.body;
+//         const existingSkill = await skill.findOne({ name });
+//         if (existingSkill) {
+//             return res.status(400).json({ message: 'Skill already exists' });
+//         }
+
+//         const newSkill = new skill({
+//             name,
+//             specialty
+//         });
+
+//         await newSkill.save();
+//         res.status(201).json({ message: 'Skill created successfully', skill: newSkill });
+//     } catch (error) {
+//         console.error('Error creating skill:', error);
+//         res.status(500).json({ message: 'Server error', error: error.message });
+//     }
+// };
+
 const createSkill = async (req, res) => {
-    try {
-        const { name, specialty } = req.body;
-        const existingSkill = await skill.findOne({ name });
-        if (existingSkill) {
-            return res.status(400).json({ message: 'Skill already exists' });
-        }
+  try {
+    const { name, specialty } = req.body;
 
-        const newSkill = new skill({
-            name,
-            specialty
-        });
-
-        await newSkill.save();
-        res.status(201).json({ message: 'Skill created successfully', skill: newSkill });
-    } catch (error) {
-        console.error('Error creating skill:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+    // Basic validation
+    if (!name || !specialty) {
+      return res.status(400).json({ message: "Skill name and specialty are required." });
     }
-};
 
+    // Normalize name (trim, collapse spaces, lowercase)
+    const cleanName = name
+      .trim()
+      .replace(/\s+/g, " ")
+      .toLowerCase();
+
+    // Check if specialty exists
+    const specialtyExists = await Specialty.findById(specialty);
+    if (!specialtyExists) {
+      return res.status(404).json({ message: "Specialty not found." });
+    }
+
+    // Case-insensitive unique check
+    const existingSkill = await Skill.findOne({
+      name: { $regex: new RegExp(`^${cleanName}$`, "i") }
+    });
+
+    if (existingSkill) {
+      return res.status(409).json({ message: "Skill already exists." });
+    }
+
+    // Create the new skill
+    const newSkill = new Skill({
+      name: cleanName,
+      specialty
+    });
+
+    await newSkill.save();
+
+    res.status(201).json({
+      message: "Skill created successfully.",
+      skill:newSkill
+    });
+
+  } catch (err) {
+    console.error("Error creating skill:", err);
+    res.status(500).json({ message: "Server error. Could not create skill." });
+  }
+};
 
 //get skill by id
 const getSkillById = async (req, res) => {
@@ -69,7 +118,7 @@ const deleteSkillById = async (req, res) => {
 //get all skills for admin dashboard
 const getAllSkills = async (req, res) => {
     try {
-        const skills = await skill.find().populate('specialty', 'name description');
+        const skills = await Skill.find().populate('specialty', 'name description');
         res.json(skills);
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
